@@ -24,7 +24,7 @@ Parameters:
 
     Size of the neighbourhood. Must be between 1 (3x3) and 7 (15x15).
 
-    Default: 1 for the first plane, and the previous plane's radius for the other planes.
+    Default: 1.
 
 - *thrY*, *thrUV*
 
