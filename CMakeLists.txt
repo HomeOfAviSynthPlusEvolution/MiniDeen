@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.1)
 project (MiniDeen)
 add_library(MiniDeen SHARED avs_interface.cpp vs_interface.cpp version.rc)
-set (VERSION "r1")
+set (VERSION "r2")
 configure_file (
   "${PROJECT_SOURCE_DIR}/version.hpp.in"
   "${PROJECT_SOURCE_DIR}/version.hpp"
