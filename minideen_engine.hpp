@@ -72,11 +72,11 @@ public:
         const int pixels_in_xmm = 16;
 
         // Skip radius pixels on the left and at least radius pixels on the right.
-        int width_simd = (width - radius * 2) / pixels_in_xmm * pixels_in_xmm;
+        int width_simd = width & -pixels_in_xmm;
 
         for (int y = 0; y < height; y++) {
-            for (int x = radius; x < radius + width_simd; x += pixels_in_xmm) {
-                __m128i center_pixel = _mm_loadu_si128((const __m128i *)&srcp[x]);
+            for (int x = 0; x < width_simd; x += pixels_in_xmm) {
+                __m128i center_pixel = _mm_load_si128((const __m128i *)&srcp[x]);
 
                 __m128i center_lo = _mm_unpacklo_epi8(center_pixel, zeroes);
                 __m128i center_hi = _mm_unpackhi_epi8(center_pixel, zeroes);
@@ -169,7 +169,7 @@ public:
 
         process_plane_scalar<uint8_t>(srcp_orig,
                                       dstp_orig,
-                                      radius + width_simd,
+                                      std::min(width_simd, width - radius),
                                       width,
                                       width,
                                       height,
