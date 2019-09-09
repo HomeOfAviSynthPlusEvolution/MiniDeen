@@ -62,18 +62,20 @@ public:
     auto heightUV = height(src, PLANAR_U);
     auto strideY = stride(src, PLANAR_Y);
     auto strideUV = stride(src, PLANAR_U);
+    auto strideWY = stride(dst, PLANAR_Y);
+    auto strideWUV = stride(dst, PLANAR_U);
     if (y == 3)
-      process_plane(src->GetReadPtr(PLANAR_Y), dst->GetWritePtr(PLANAR_Y), 0, widthY, widthY, heightY, strideY, thrY, radius, magic);
+      process_plane(src->GetReadPtr(PLANAR_Y), dst->GetWritePtr(PLANAR_Y), 0, widthY, widthY, heightY, strideY, strideWY, thrY, radius, magic);
     else if (y == 2)
-      _env->BitBlt(dst->GetWritePtr(PLANAR_Y), strideY, src->GetReadPtr(PLANAR_Y), strideY, widthY * byte_per_channel, heightY);
+      _env->BitBlt(dst->GetWritePtr(PLANAR_Y), strideWY, src->GetReadPtr(PLANAR_Y), strideY, widthY * byte_per_channel, heightY);
     if (u == 3)
-      process_plane(src->GetReadPtr(PLANAR_U), dst->GetWritePtr(PLANAR_U), 0, widthUV, widthUV, heightUV, strideUV, thrUV, radius, magic);
+      process_plane(src->GetReadPtr(PLANAR_U), dst->GetWritePtr(PLANAR_U), 0, widthUV, widthUV, heightUV, strideUV, strideWUV, thrUV, radius, magic);
     else if (u == 2)
-      _env->BitBlt(dst->GetWritePtr(PLANAR_U), strideUV, src->GetReadPtr(PLANAR_U), strideUV, widthUV * byte_per_channel, heightUV);
+      _env->BitBlt(dst->GetWritePtr(PLANAR_U), strideWUV, src->GetReadPtr(PLANAR_U), strideUV, widthUV * byte_per_channel, heightUV);
     if (v == 3)
-      process_plane(src->GetReadPtr(PLANAR_V), dst->GetWritePtr(PLANAR_V), 0, widthUV, widthUV, heightUV, strideUV, thrUV, radius, magic);
+      process_plane(src->GetReadPtr(PLANAR_V), dst->GetWritePtr(PLANAR_V), 0, widthUV, widthUV, heightUV, strideUV, strideWUV, thrUV, radius, magic);
     else if (v == 2)
-      _env->BitBlt(dst->GetWritePtr(PLANAR_V), strideUV, src->GetReadPtr(PLANAR_V), strideUV, widthUV * byte_per_channel, heightUV);
+      _env->BitBlt(dst->GetWritePtr(PLANAR_V), strideWUV, src->GetReadPtr(PLANAR_V), strideUV, widthUV * byte_per_channel, heightUV);
 
     return dst;
   }

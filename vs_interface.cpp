@@ -65,8 +65,9 @@ static const VSFrameRef *VS_CC minideenGetFrame(int n, int activationReason, voi
             int stride = vsapi->getStride(src, plane);
             int width = vsapi->getFrameWidth(src, plane);
             int height = vsapi->getFrameHeight(src, plane);
+            int strideW = vsapi->getStride(dst, plane);
 
-            d->process_plane(srcp, dstp, 0, width, width, height, stride, d->threshold[plane], d->radius[plane], d->magic);
+            d->process_plane(srcp, dstp, 0, width, width, height, stride, strideW, d->threshold[plane], d->radius[plane], d->magic);
         }
 
         vsapi->freeFrame(src);

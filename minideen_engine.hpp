@@ -17,12 +17,13 @@ protected:
     ;
 public:
     template <typename PixelType>
-    static void process_plane_scalar(const uint8_t *srcp8, uint8_t *dstp8, int first_column, int last_column, int width, int height, int stride, unsigned threshold, int radius, const uint16_t magic[MAX_PIXEL_COUNT]) {
+    static void process_plane_scalar(const uint8_t *srcp8, uint8_t *dstp8, int first_column, int last_column, int width, int height, int stride, int stride_w, unsigned threshold, int radius, const uint16_t magic[MAX_PIXEL_COUNT]) {
         (void)magic;
 
         const PixelType *srcp = (const PixelType *)srcp8;
         PixelType *dstp = (PixelType *)dstp8;
         stride /= sizeof(PixelType);
+        stride_w /= sizeof(PixelType);
 
         for (int y = 0; y < height; y++) {
             for (int x = first_column; x < last_column; x++) {
@@ -46,7 +47,7 @@ public:
             }
 
             srcp += stride;
-            dstp += stride;
+            dstp += stride_w;
         }
     }
 
@@ -56,7 +57,7 @@ public:
 #define zeroes _mm_setzero_si128()
 
 
-    static void process_plane_sse2_8bit(const uint8_t *srcp, uint8_t *dstp, int first_column, int last_column, int width, int height, int stride, unsigned threshold, int radius, const uint16_t magic[MAX_PIXEL_COUNT]) {
+    static void process_plane_sse2_8bit(const uint8_t *srcp, uint8_t *dstp, int first_column, int last_column, int width, int height, int stride, int stride_w, unsigned threshold, int radius, const uint16_t magic[MAX_PIXEL_COUNT]) {
         (void)first_column; // Unused in this function.
         (void)last_column; // Unused in this function.
 
@@ -151,7 +152,7 @@ public:
             /// (sum + half_counter) * 65536 / counter) >> 16
 
             srcp += stride;
-            dstp += stride;
+            dstp += stride_w;
         }
 
         process_plane_scalar<uint8_t>(srcp_orig,
@@ -161,6 +162,7 @@ public:
                                       width,
                                       height,
                                       stride,
+                                      stride_w,
                                       threshold,
                                       radius,
                                       magic);
@@ -172,13 +174,14 @@ public:
                                       width,
                                       height,
                                       stride,
+                                      stride_w,
                                       threshold,
                                       radius,
                                       magic);
     }
 
 
-    static void process_plane_sse2_16bit(const uint8_t *srcp8, uint8_t *dstp8, int first_column, int last_column, int width, int height, int stride, unsigned threshold, int radius, const uint16_t magic[MAX_PIXEL_COUNT]) {
+    static void process_plane_sse2_16bit(const uint8_t *srcp8, uint8_t *dstp8, int first_column, int last_column, int width, int height, int stride, int stride_w, unsigned threshold, int radius, const uint16_t magic[MAX_PIXEL_COUNT]) {
         (void)first_column; // Unused in this function.
         (void)last_column; // Unused in this function.
         (void)magic;
@@ -186,6 +189,7 @@ public:
         const uint16_t *srcp = (const uint16_t *)srcp8;
         uint16_t *dstp = (uint16_t *)dstp8;
         stride /= 2;
+        stride_w /= 2;
 
         // Subtract 1 so we can use a less than or equal comparison instead of less than.
         __m128i words_th = _mm_set1_epi16(threshold - 1);
@@ -255,7 +259,7 @@ public:
             }
 
             srcp += stride;
-            dstp += stride;
+            dstp += stride_w;
         }
 
         process_plane_scalar<uint16_t>(srcp8,
@@ -265,6 +269,7 @@ public:
                                        width,
                                        height,
                                        stride * 2,
+                                       stride_w * 2,
                                        threshold,
                                        radius,
                                        magic);
@@ -276,6 +281,7 @@ public:
                                        width,
                                        height,
                                        stride * 2,
+                                       stride_w * 2,
                                        threshold,
                                        radius,
                                        magic);
