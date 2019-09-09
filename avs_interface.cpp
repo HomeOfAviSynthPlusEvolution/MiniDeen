@@ -28,12 +28,18 @@ public:
     // Check input
     if (!vi.HasVideo())
       throw("where's the video?");
-    if (thrY < 2 || thrY > 255)
+    if ((thrY < 0 || thrY > 255) && y == 3)
       throw("threshold (Y) must be between 2 and 255 (inclusive).");
-    if (thrUV < 2 || thrUV > 255)
+    if ((thrUV < 0 || thrUV > 255) && (u == 3 || v == 3))
       throw("threshold (UV) must be between 2 and 255 (inclusive).");
     if (!supported_pixel())
       throw("only 8..16 bit integer clips with constant format are supported.");
+    if (thrY < 2 && y == 3)
+      y = 2;
+    if (thrUV < 2 && u == 3)
+      u = 2;
+    if (thrUV < 2 && v == 3)
+      v = 2;
 
     int pixel_max = (1 << bit_per_channel) - 1;
 
