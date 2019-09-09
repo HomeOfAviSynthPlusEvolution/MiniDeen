@@ -1,7 +1,11 @@
 cmake_minimum_required (VERSION 3.1)
 project (MiniDeen)
 add_library(MiniDeen SHARED avs_interface.cpp vs_interface.cpp version.rc)
-set (VERSION "r2")
+
+find_package(Git)
+execute_process(COMMAND ${GIT_EXECUTABLE} describe --first-parent --tags --always OUTPUT_VARIABLE GIT_REPO_VERSION)
+string(REGEX REPLACE "(r[0-9]+).*" "\\1" VERSION ${GIT_REPO_VERSION})
+
 configure_file (
   "${PROJECT_SOURCE_DIR}/version.hpp.in"
   "${PROJECT_SOURCE_DIR}/version.hpp"
