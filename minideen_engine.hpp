@@ -4,7 +4,11 @@
 #include <cstring>
 
 #if defined (MINIDEEN_X86)
-#include <intrin.h>
+  #if _MSC_VER
+    #include <intrin.h>
+  #else
+    #include <x86intrin.h>
+  #endif
 #endif
 
 // The largest is 15x15, but the center pixel gets added three times.

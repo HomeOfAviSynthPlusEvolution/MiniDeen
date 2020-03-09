@@ -78,7 +78,7 @@ public:
     _env = env;
     return get(n);
   }
-  void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) { child->GetAudio(buf, start, count, env); }
+  void __stdcall GetAudio(void* buf, int64_t start, int64_t count, IScriptEnvironment* env) { child->GetAudio(buf, start, count, env); }
   const VideoInfo& __stdcall GetVideoInfo() { return child->GetVideoInfo(); }
   bool __stdcall GetParity(int n) { return child->GetParity(n); }
   int __stdcall SetCacheHints(int cachehints, int frame_range) { return 0; } ;
