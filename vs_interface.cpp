@@ -181,7 +181,7 @@ static void VS_CC minideenCreate(const VSMap *in, VSMap *out, void *userData, VS
 
 
 VS_EXTERNAL_API(void) VapourSynthPluginInit(VSConfigPlugin configFunc, VSRegisterFunction registerFunc, VSPlugin *plugin) {
-    configFunc("com.nodame.minideen", "minideen" PLUGIN_VERSION, "Spatial convolution with thresholds", VAPOURSYNTH_API_VERSION, 1, plugin);
+    configFunc("com.nodame.minideen", "minideen", "Spatial convolution with thresholds", VAPOURSYNTH_API_VERSION, 1, plugin);
     registerFunc("MiniDeen",
                  "clip:clip;"
                  "radius:int[]:opt;"
