@@ -221,4 +221,5 @@ void minideen_AVX2_16(const uint8_t *srcp8, uint8_t *dstp8, int width, int heigh
     srcp += src_stride;
     dstp += dst_stride;
   }
+  _mm256_zeroupper();
 }
