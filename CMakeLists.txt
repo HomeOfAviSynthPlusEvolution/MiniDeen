@@ -1,9 +1,8 @@
 cmake_minimum_required (VERSION 3.15)
 project (neo_minideen CXX)
 file(GLOB CODE "src/*.cpp")
-file(GLOB SSE41_CODE_IMPL "src/*SSE41.cpp")
+file(GLOB SSE2_CODE_IMPL "src/*SSE2.cpp")
 file(GLOB AVX2_CODE_IMPL "src/*AVX2.cpp")
-file(GLOB AVX512_CODE_IMPL "src/*AVX512.cpp")
 add_library(neo-minideen SHARED main.cpp src/version.rc ${CODE} ${CODE_IMPL})
 set_property(TARGET neo-minideen PROPERTY CXX_STANDARD 17)
 
@@ -40,9 +39,8 @@ include_directories(.)
 include_directories(include/dualsynth)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  set_source_files_properties(${SSE41_CODE_IMPL} PROPERTIES COMPILE_FLAGS "/arch:SSE2")
+  set_source_files_properties(${SSE2_CODE_IMPL} PROPERTIES COMPILE_FLAGS "/arch:SSE2")
   set_source_files_properties(${AVX2_CODE_IMPL} PROPERTIES COMPILE_FLAGS "/arch:AVX2")
-  set_source_files_properties(${AVX512_CODE_IMPL} PROPERTIES COMPILE_FLAGS "/arch:AVX512")
 
   if (CMAKE_GENERATOR_TOOLSET MATCHES "v[0-9]*_xp")
     target_compile_definitions(neo-minideen PRIVATE WINVER=0x502 _WIN32_WINNT=0x502)
@@ -50,14 +48,12 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   endif()
 
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-  set_source_files_properties(${SSE41_CODE_IMPL} PROPERTIES COMPILE_FLAGS "/arch:SSE2")
+  set_source_files_properties(${SSE2_CODE_IMPL} PROPERTIES COMPILE_FLAGS "/arch:SSE2")
   set_source_files_properties(${AVX2_CODE_IMPL} PROPERTIES COMPILE_FLAGS "/arch:AVX2")
-  set_source_files_properties(${AVX512_CODE_IMPL} PROPERTIES COMPILE_FLAGS "/QxCOMMON-AVX512")
 
 else()
-  set_source_files_properties(${SSE41_CODE_IMPL} PROPERTIES COMPILE_FLAGS "-msse4.1")
+  set_source_files_properties(${SSE2_CODE_IMPL} PROPERTIES COMPILE_FLAGS "-msse2")
   set_source_files_properties(${AVX2_CODE_IMPL} PROPERTIES COMPILE_FLAGS "-mavx2")
-  set_source_files_properties(${AVX512_CODE_IMPL} PROPERTIES COMPILE_FLAGS "-mavx512bw")
 
 endif()
 

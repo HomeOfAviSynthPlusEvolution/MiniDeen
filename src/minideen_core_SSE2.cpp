@@ -2,9 +2,7 @@
 #include <algorithm>
 #include <cmath>
 
-enum PathType {
-  Slow, Fast
-};
+#define zeroes _mm_setzero_si128()
 
 __m128 _mm_rcpnr_ps(const __m128 &a) {
   const __m128 r = _mm_rcp_ps(a);
@@ -12,7 +10,7 @@ __m128 _mm_rcpnr_ps(const __m128 &a) {
 }
 
 template <PathType pt>
-void core_8(const uint8_t *srcp, uint8_t *dstp, int y, int height, int stride, __m128i &bytes_th, int diff_l, int diff_r, int radius) {
+static void core_8(const uint8_t *srcp, uint8_t *dstp, int y, int height, int stride, __m128i &bytes_th, int diff_l, int diff_r, int radius) {
   alignas(64) uint8_t border_check[64] = {};
 
   if constexpr (pt == Slow) {
@@ -100,7 +98,7 @@ void core_8(const uint8_t *srcp, uint8_t *dstp, int y, int height, int stride, _
 }
 
 template <PathType pt>
-void core_16(const uint16_t *srcp, uint16_t *dstp, int y, int height, int stride, __m128i &words_th, int diff_l, int diff_r, int radius) {
+static void core_16(const uint16_t *srcp, uint16_t *dstp, int y, int height, int stride, __m128i &words_th, int diff_l, int diff_r, int radius) {
   alignas(64) uint16_t border_check[64] = {};
 
   if constexpr (pt == Slow) {
@@ -162,10 +160,21 @@ void core_16(const uint16_t *srcp, uint16_t *dstp, int y, int height, int stride
   resultf_lo = _mm_add_ps(resultf_lo, _mm_set1_ps(0.501f));
   resultf_hi = _mm_add_ps(resultf_hi, _mm_set1_ps(0.501f));
 
+  /*
+  // _mm_packus_epi32 is only available in SSE4.1
+  
   __m128i result_lo = _mm_cvttps_epi32(resultf_lo);
   __m128i result_hi = _mm_cvttps_epi32(resultf_hi);
 
   _mm_store_si128((__m128i *)dstp, _mm_packus_epi32(result_lo, result_hi));
+  */
+
+  __m128i result_lo = _mm_sub_epi32(_mm_cvttps_epi32(resultf_lo), _mm_set1_epi32(32768));
+  __m128i result_hi = _mm_sub_epi32(_mm_cvttps_epi32(resultf_hi), _mm_set1_epi32(32768));
+
+  __m128i result = _mm_packs_epi32(result_lo, result_hi);
+
+  _mm_store_si128((__m128i *)dstp, _mm_add_epi16(result, _mm_set1_epi16(32768)));
 }
 
 void minideen_SSE2_8(const uint8_t *srcp, uint8_t *dstp, int width, int height, int src_stride, int dst_stride, unsigned threshold, int radius)

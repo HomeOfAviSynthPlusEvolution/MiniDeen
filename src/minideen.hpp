@@ -140,27 +140,19 @@ struct MiniDeen final : Filter {
       case 1: minideen_core = minideen_C<uint8_t>; break;
       case 2: minideen_core = minideen_C<uint16_t>; break;
     }
-    
+
     if (CPUFlags & CPUF_SSE2) {
       switch (in_vi.Format.BytesPerSample) {
         case 1: minideen_core = minideen_SSE2_8; break;
         case 2: minideen_core = minideen_SSE2_16; break;
       }
     }
-    // if (CPUFlags & CPUF_AVX2) {
-    //   switch (in_vi.Format.BytesPerSample) {
-    //     case 1: tmedian_SIMD = tmedian_SIMD_256<uint8_t>; break;
-    //     case 2: tmedian_SIMD = tmedian_SIMD_256<uint16_t>; break;
-    //     case 4: tmedian_SIMD = tmedian_SIMD_256<float_t>; break;
-    //   }
-    // }
-    // if (CPUFlags & CPUF_AVX512F) {
-    //   switch (in_vi.Format.BytesPerSample) {
-    //     case 1: tmedian_SIMD = tmedian_SIMD_512<uint8_t>; break;
-    //     case 2: tmedian_SIMD = tmedian_SIMD_512<uint16_t>; break;
-    //     case 4: tmedian_SIMD = tmedian_SIMD_512<float_t>; break;
-    //   }
-    // }
+    if (CPUFlags & CPUF_AVX2) {
+      switch (in_vi.Format.BytesPerSample) {
+        case 1: minideen_core = minideen_AVX2_8; break;
+        case 2: minideen_core = minideen_AVX2_16; break;
+      }
+    }
   }
 
   DSFrame GetFrame(int n, std::unordered_map<int, DSFrame> in_frames) override
