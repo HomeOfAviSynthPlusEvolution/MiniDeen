@@ -16,6 +16,10 @@ namespace Plugin {
   const char* Description = "Neo Minideen Filter " PLUGIN_VERSION;
 }
 
+struct LegacyMiniDeen : MiniDeen {
+  const char* AVSName() const override { return "minideen"; }
+};
+
 std::vector<register_vsfilter_proc> RegisterVSFilters()
 {
   return std::vector<register_vsfilter_proc> { VSInterface::RegisterFilter<MiniDeen> };
@@ -23,5 +27,8 @@ std::vector<register_vsfilter_proc> RegisterVSFilters()
 
 std::vector<register_avsfilter_proc> RegisterAVSFilters()
 {
-  return std::vector<register_avsfilter_proc> { AVSInterface::RegisterFilter<MiniDeen> };
+  return std::vector<register_avsfilter_proc> {
+    AVSInterface::RegisterFilter<MiniDeen>,
+    AVSInterface::RegisterFilter<LegacyMiniDeen>
+  };
 }

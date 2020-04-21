@@ -50,6 +50,17 @@ Parameters:
 
     Default: 3, process all planes.
 
+- *opt*
+
+    Sets which CPU optimizations to use.
+
+        0 - Auto detect
+        1 - Use C
+        2 - Use up to SSE2
+        3 - Use up to AVX2
+
+    Default: 0.
+
 
 ## Compilation (MSVC)
 

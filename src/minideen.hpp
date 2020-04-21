@@ -14,10 +14,11 @@ int GetCPUFlags();
 // static constexpr int max_radius {15};
 // static constexpr int pixel_count {max_radius * max_radius + 2 + 1};
 
-struct MiniDeen final : Filter {
+struct MiniDeen : Filter {
   int process[4] {2, 2, 2, 2};
   int threshold[3] {10, 12, 12};
   int radius[3] {1, 1, 1};
+  int opt {0};
   InDelegator* _in;
   bool bypass {true};
   // uint16_t rcp[pixel_count] {0};
@@ -41,7 +42,8 @@ struct MiniDeen final : Filter {
       Param {"thrUV", Integer, false, true, false},
       Param {"y", Integer, false, true, false},
       Param {"u", Integer, false, true, false},
-      Param {"v", Integer, false, true, false}
+      Param {"v", Integer, false, true, false},
+      Param {"opt", Integer}
     };
   }
   void Initialize(InDelegator* in, DSVideoInfo in_vi, FetchFrameFunctor* fetch_frame) override
@@ -102,6 +104,7 @@ struct MiniDeen final : Filter {
       if (threshold_tmp > 0)
         threshold[1] = threshold[2] = threshold_tmp;
     }
+    in->Read("opt", opt);
 
     if ((threshold[0] < 0 || threshold[0] > 255) && process[0] == 3)
       throw("threshold (Y) must be between 2 and 255 (inclusive).");
@@ -141,13 +144,13 @@ struct MiniDeen final : Filter {
       case 2: minideen_core = minideen_C<uint16_t>; break;
     }
 
-    if (CPUFlags & CPUF_SSE2) {
+    if ((CPUFlags & CPUF_SSE2) && (opt <= 0 || opt > 1)) {
       switch (in_vi.Format.BytesPerSample) {
         case 1: minideen_core = minideen_SSE2_8; break;
         case 2: minideen_core = minideen_SSE2_16; break;
       }
     }
-    if (CPUFlags & CPUF_AVX2) {
+    if ((CPUFlags & CPUF_AVX2) && (opt <= 0 || opt > 2)) {
       switch (in_vi.Format.BytesPerSample) {
         case 1: minideen_core = minideen_AVX2_8; break;
         case 2: minideen_core = minideen_AVX2_16; break;
