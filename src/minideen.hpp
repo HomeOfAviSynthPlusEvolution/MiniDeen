@@ -89,19 +89,19 @@ struct MiniDeen : Filter {
 
       int radius_tmp = -1;
       in->Read("radius", radius_tmp);
-      if (radius_tmp > 0)
+      if (radius_tmp >= 0)
         radius[0] = radius[1] = radius[2] = radius_tmp;
 
       radius_tmp = -1;
       in->Read("radiusY", radius[0]);
       in->Read("radiusUV", radius_tmp);
-      if (radius_tmp > 0)
+      if (radius_tmp >= 0)
         radius[1] = radius[2] = radius_tmp;
 
       int threshold_tmp = -1;
       in->Read("thrY", threshold[0]);
       in->Read("thrUV", threshold_tmp);
-      if (threshold_tmp > 0)
+      if (threshold_tmp >= 0)
         threshold[1] = threshold[2] = threshold_tmp;
     }
     in->Read("opt", opt);
